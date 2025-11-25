@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GEMIN | PORTFOLIO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 保持原有的酸性设计样式，无需改动 --- */
+        :root { --bg: #050505; --text: #ffffff; --accent: #ccff00; --gray: #888; --border: #333; }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; overflow-x: hidden; background-image: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%); }
+        a { text-decoration: none; color: inherit; } img, video { width: 100%; display: block; }
+        .cursor { position: fixed; top: 0; left: 0; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; transition: transform 0.2s; }
+        .cursor-follower { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: top 0.1s, left 0.1s, width 0.3s, height 0.3s, background 0.3s; }
+        body.hover-active .cursor { transform: translate(-50%, -50%) scale(0); }
+        body.hover-active .cursor-follower { width: 80px; height: 80px; background: var(--accent); border: none; opacity: 0.8; mix-blend-mode: difference; }
+        nav { position: fixed; top: 0; width: 100%; padding: 30px 5vw; display: flex; justify-content: space-between; align-items: center; z-index: 100; mix-blend-mode: difference; }
+        .logo { font-family: 'Syncopate', sans-serif; font-weight: 700; letter-spacing: 1px; }
+        header { min-height: 90vh; display: flex; flex-direction: column; justify-content: center; padding: 0 5vw; padding-top: 80px; }
+        .hero-title { font-family: 'Syncopate', sans-serif; font-size: clamp(3rem, 10vw, 11rem); font-weight: 700; line-height: 0.85; text-transform: uppercase; }
+        .hero-row { display: block; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.5); transition: all 0.4s ease; cursor: none; }
+        .hero-row:hover { color: var(--accent); -webkit-text-stroke: 0; transform: translateX(20px); }
+        .hero-sub { margin-top: 50px; color: var(--gray); font-size: 1.1rem; max-width: 400px; line-height: 1.6; }
+        .marquee { background: var(--accent); color: #000; padding: 15px 0; overflow: hidden; white-space: nowrap; margin-bottom: 100px; }
+        .marquee span { display: inline-block; font-family: 'Syncopate'; font-weight: 700; font-size: 1.5rem; animation: scroll 20s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        #works { padding: 0 5vw 100px; }
+        .section-label { font-family: 'Syncopate'; color: var(--accent); margin-bottom: 50px; font-size: 14px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .works-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 80px 40px; }
+        .case-card { display: block; position: relative; cursor: pointer; }
+        .case-card:nth-child(even) { margin-top: 150px; }
+        .media-container { width: 100%; height: 450px; overflow: hidden; position: relative; background: #111; border-radius: 4px; }
+        .media-content { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(0.2, 1, 0.3, 1), filter 0.3s; filter: grayscale(100%); opacity: 0.8; }
+        .case-card:hover .media-content { transform: scale(1.05); filter: grayscale(0%); opacity: 1; }
+        .case-info { margin-top: 25px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .case-title { font-family: 'Syncopate'; font-size: 2rem; line-height: 1; text-transform: uppercase; color: var(--text); transition: color 0.3s; }
+        .case-card:hover .case-title { color: var(--accent); }
+        .case-cat { font-size: 0.9rem; color: var(--gray); margin-top: 10px; display: block;}
+        /* 数据源隐藏容器 */
+        .data-source { display: none; }
+        #news { padding: 0 5vw 150px; }
+        .news-list { border-top: 1px solid var(--border); }
+        .news-item { display: flex; justify-content: space-between; align-items: center; padding: 40px 20px; border-bottom: 1px solid var(--border); transition: all 0.3s; cursor: pointer; }
+        .news-item:hover { background-color: var(--accent); padding-left: 40px; padding-right: 40px; }
+        .news-item:hover * { color: #000 !important; }
+        .news-left { display: flex; flex-direction: column; gap: 10px; }
+        .news-date { font-family: 'Syncopate'; font-size: 0.8rem; color: var(--gray); transition: color 0.3s; }
+        .news-title { font-size: 1.8rem; font-weight: 500; transition: color 0.3s; }
+        .arrow { font-size: 1.5rem; color: var(--gray); transition: transform 0.3s, color 0.3s; }
+        .news-item:hover .arrow { transform: rotate(-45deg); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; overflow-y: auto; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.8, 0, 0.2, 1); }
+        .modal.active { transform: translateY(0); }
+        .modal-nav { position: sticky; top: 0; padding: 30px 5vw; display: flex; justify-content: flex-end; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); z-index: 2001; }
+        .close-btn { font-family: 'Syncopate'; font-size: 1.2rem; cursor: pointer; color: var(--text); }
+        .close-btn:hover { color: var(--accent); }
+        .modal-body { max-width: 900px; margin: 0 auto; padding: 50px 5vw 100px; }
+        .modal-hero-media { width: 100%; margin-bottom: 40px; border-radius: 4px; }
+        .modal-h1 { font-family: 'Syncopate'; font-size: 3rem; margin-bottom: 20px; color: var(--accent); text-transform: uppercase; }
+        .modal-text { font-size: 1.2rem; line-height: 1.8; color: #ccc; margin-bottom: 60px; white-space: pre-wrap; }
+        .detail-img { width: 100%; margin-bottom: 0; display: block; }
+        footer { padding: 50px 5vw; border-top: 1px solid var(--border); text-align: center; }
+        .footer-link { font-family: 'Syncopate'; font-size: 1rem; color: var(--gray); margin: 0 15px; }
+        .footer-link:hover { color: var(--accent); }
+        @media (max-width: 768px) { .hero-title { font-size: 15vw; } .works-grid { grid-template-columns: 1fr; gap: 50px; } .case-card:nth-child(even) { margin-top: 0; } .news-item { flex-direction: column; align-items: flex-start; gap: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div> <div class="cursor-follower"></div>
+    <nav> <div class="logo hover-target">GEMIN®</div> <div style="display:flex; gap:20px;"> <a href="#works" class="hover-target">WORK</a> <a href="#news" class="hover-target">NEWS</a> </div> </nav>
+
+    <main>
+        <!-- 头部 Banner -->
+        <header>
+            <h1 class="hero-title">
+                <span class="hero-row hover-target">Digital</span>
+                <span class="hero-row hover-target">Product</span>
+                <span class="hero-row hover-target">Designer</span>
+            </h1>
+            <!-- 后台修改处：个人简介 -->
+            <p class="hero-sub">专注构建极具张力的交互体验。<br>Exploring the boundary between <span style="color:var(--accent)">Motion</span> & <span style="color:var(--accent)">Utility</span>.</p>
+        </header>
+
+        <div class="marquee"><span>UI DESIGN • UX RESEARCH • PROTOTYPING • MOTION DESIGN • FRONT-END DEV • </span></div>
+
+        <!-- 作品列表 (所有内容都在HTML里修改) -->
+        <section id="works">
+            <div class="section-label">SELECTED WORKS</div>
+            <div class="works-grid">
+                
+                <!-- 案例 1 (视频) -->
+                <!-- 在 data-desc 中修改详情文案 -->
+                <div class="case-card hover-target" onclick="openWork(this)">
+                    <!-- 隐藏的数据源：用于弹窗读取 -->
+                    <div class="data-source">
+                        <div class="d-title">Fintech Pro</div>
+                        <div class="d-cat">App Design / Motion</div>
+                        <!-- 这里修改详情页描述 -->
+                        <div class="d-desc">专为新一代投资者设计的交易终端。重点在于将复杂的数据流通过动态图表实时展示。视频展示了核心的交易流程动效。</div>
+                        <div class="d-type">video</div>
+                        <!-- 这里修改视频链接 -->
+                        <div class="d-src">https://joy1.videvo.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4</div>
+                    </div>
+
+                    <!-- 卡片显示的内容 -->
+                    <div class="media-container">
+                        <video class="media-content" src="https://joy1.videvo.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4" autoplay muted loop playsinline></video>
+                    </div>
+                    <div class="case-info">
+                        <div><h3 class="case-title">Fintech Pro</h3><span class="case-cat">App Design</span></div>
+                        <div style="font-size:2rem; color:var(--border)">01</div>
+                    </div>
+                </div>
+
+                <!-- 案例 2 (GIF) -->
+                <div class="case-card hover-target" onclick="openWork(this)">
+                    <div class="data-source">
+                        <div class="d-title">Cyber Dash</div>
+                        <div class="d-cat">Web / SaaS</div>
+                        <div class="d-desc">企业级后台管理系统。暗黑模式设计减少了长时间工作的视觉疲劳。GIF 展示了侧边栏的交互细节。</div>
+                        <div class="d-type">image</div>
+                        <div class="d-src">https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZ0bnZ4Y3B6OGx6Y3B6OGx6Y3B6OGx6Y3B6OGx6Y3B6OGx6eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1R1TVThqcehtWl85y/giphy.gif</div>
+                    </div>
+                    <div class="media-container">
+                        <img class="media-content" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmZ0bnZ4Y3B6OGx6Y3B6OGx6Y3B6OGx6Y3B6OGx6Y3B6OGx6eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/L1R1TVThqcehtWl85y/giphy.gif">
+                    </div>
+                    <div class="case-info">
+                        <div><h3 class="case-title">Cyber Dash</h3><span class="case-cat">Web / SaaS</span></div>
+                        <div style="font-size:2rem; color:var(--border)">02</div>
+                    </div>
+                </div>
+
+                <!-- 案例 3 (图片) -->
+                <div class="case-card hover-target" onclick="openWork(this)">
+                    <div class="data-source">
+                        <div class="d-title">Urban Soul</div>
+                        <div class="d-cat">E-Commerce</div>
+                        <div class="d-desc">潮流品牌官网重构。打破传统栅格布局，创造杂志般的阅读体验。</div>
+                        <div class="d-type">image</div>
+                        <div class="d-src">https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1000&auto=format&fit=crop</div>
+                    </div>
+                    <div class="media-container">
+                        <img class="media-content" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1000&auto=format&fit=crop">
+                    </div>
+                    <div class="case-info">
+                        <div><h3 class="case-title">Urban Soul</h3><span class="case-cat">E-Commerce</span></div>
+                        <div style="font-size:2rem; color:var(--border)">03</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 新闻列表 -->
+        <section id="news">
+            <div class="section-label">LATEST UPDATES</div>
+            <div class="news-list">
+                
+                <!-- 新闻 1 -->
+                <div class="news-item hover-target" onclick="openNews(this)">
+                    <div class="data-source">
+                        <div class="d-title">2025 Trends</div>
+                        <div class="d-desc">这里是新闻的详细内容... 你可以在 HTML 的这个 div 里写很长很长的文章。\n\n支持换行。</div>
+                    </div>
+                    <div class="news-left">
+                        <span class="news-date">NOV 24, 2024</span>
+                        <h3 class="news-title">2025 Design Trends Report</h3>
+                    </div>
+                    <div class="arrow">↗</div>
+                </div>
+
+                <!-- 新闻 2 -->
+                <div class="news-item hover-target" onclick="openNews(this)">
+                    <div class="data-source">
+                        <div class="d-title">Design Systems</div>
+                        <div class="d-desc">分享我在大型团队中从零搭建 Token 系统的经验，以及如何通过 Figma Variables 提效。</div>
+                    </div>
+                    <div class="news-left">
+                        <span class="news-date">OCT 15, 2024</span>
+                        <h3 class="news-title">Design Systems: Beyond Components</h3>
+                    </div>
+                    <div class="arrow">↗</div>
+                </div>
+
+            </div>
+        </section>
+
+        <footer>
+            <a href="mailto:hi@gemin.design" class="footer-link hover-target">EMAIL</a>
+            <a href="#" class="footer-link hover-target">DRIBBBLE</a>
+            <p style="margin-top:30px; font-size:12px; color:#444;">&copy; 2025 GEMIN. CODED.</p>
+        </footer>
+    </main>
+
+    <!-- 弹窗结构 -->
+    <div class="modal" id="detailModal">
+        <div class="modal-nav">
+            <div class="close-btn hover-target" onclick="closeModal()">CLOSE ✕</div>
+        </div>
+        <div class="modal-body">
+            <div id="modal-media-wrapper"></div>
+            <h1 class="modal-h1" id="modal-title">Title</h1>
+            <p class="modal-text" id="modal-desc">Description</p>
+            <div class="section-label" style="margin-top:50px;">PROJECT DETAILS</div>
+            <div id="modal-gallery"></div>
+        </div>
+    </div>
+
+    <script>
+        // 光标逻辑
+        const cursor=document.querySelector('.cursor'), follower=document.querySelector('.cursor-follower');
+        let posX=0, posY=0, mouseX=0, mouseY=0;
+        document.addEventListener('mousemove', e=>{ mouseX=e.clientX; mouseY=e.clientY; cursor.style.left=mouseX+'px'; cursor.style.top=mouseY+'px'; });
+        function animate(){ posX+=(mouseX-posX)/8; posY+=(mouseY-posY)/8; follower.style.left=posX+'px'; follower.style.top=posY+'px'; requestAnimationFrame(animate); }
+        animate();
+        document.querySelectorAll('.hover-target').forEach(el=>{ el.addEventListener('mouseenter',()=>document.body.classList.add('hover-active')); el.addEventListener('mouseleave',()=>document.body.classList.remove('hover-active')); });
+
+        // 弹窗逻辑 (自动读取 HTML 中的 .data-source)
+        const modal = document.getElementById('detailModal');
+        const mTitle = document.getElementById('modal-title');
+        const mDesc = document.getElementById('modal-desc');
+        const mMediaWrapper = document.getElementById('modal-media-wrapper');
+        const mGallery = document.getElementById('modal-gallery');
+
+        function openWork(element) {
+            // 从点击的元素中读取数据
+            const data = element.querySelector('.data-source');
+            const title = data.querySelector('.d-title').innerText;
+            const desc = data.querySelector('.d-desc').innerHTML; // 支持HTML标签
+            const type = data.querySelector('.d-type').innerText;
+            const src = data.querySelector('.d-src').innerText;
+
+            mTitle.innerText = title;
+            mDesc.innerHTML = desc;
+            mMediaWrapper.innerHTML = '';
+            mGallery.innerHTML = '';
+
+            // 生成头部媒体
+            if (type === 'video') {
+                const vid = document.createElement('video');
+                vid.src = src; vid.className = 'modal-hero-media';
+                vid.autoplay = true; vid.muted = true; vid.loop = true; vid.playsInline = true;
+                mMediaWrapper.appendChild(vid);
+            } else {
+                const img = document.createElement('img');
+                img.src = src; img.className = 'modal-hero-media';
+                mMediaWrapper.appendChild(img);
+            }
+
+            // 生成模拟长图 (你可以在 data-source 里扩展长图链接)
+            for(let i=1; i<=2; i++) {
+                const img = document.createElement('img');
+                img.src = `https://placehold.co/1200x${800+i*100}/111/444?text=${title}+Detail+${i}`;
+                img.className = 'detail-img'; img.style.marginBottom = '10px';
+                mGallery.appendChild(img);
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function openNews(element) {
+            const data = element.querySelector('.data-source');
+            mTitle.innerText = data.querySelector('.d-title').innerText;
+            mDesc.innerHTML = data.querySelector('.d-desc').innerHTML;
+            mMediaWrapper.innerHTML = ''; mGallery.innerHTML = '';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            setTimeout(()=> mMediaWrapper.innerHTML = '', 500); // 清理视频节省资源
+        }
+    </script>
+</body>
+</html>
