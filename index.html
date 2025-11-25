@@ -39,6 +39,55 @@
         .case-title { font-family: 'Syncopate'; font-size: 2rem; line-height: 1; text-transform: uppercase; color: var(--text); transition: color 0.3s; }
         .case-card:hover .case-title { color: var(--accent); }
         .case-cat { font-size: 0.9rem; color: var(--gray); margin-top: 10px; display: block;}
+        /* --- 新增：折叠/展开功能样式 --- */
+
+/* 默认隐藏多余的案例 */
+.case-hidden {
+    display: none; 
+    /* 这里的动画是为了展开时稍微平滑一点 */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* 展开后的状态 */
+.case-visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* "查看全部" 按钮容器 */
+.load-more-container {
+    grid-column: 1 / -1; /* 占据整行 */
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+    padding-top: 50px;
+    border-top: 1px dashed var(--border);
+}
+
+/* 按钮本体 */
+.view-more-btn {
+    font-family: 'Syncopate', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    border: 1px solid var(--text);
+    padding: 15px 40px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    cursor: pointer;
+    background: transparent;
+}
+
+/* 按钮 Hover 效果：变绿 */
+.view-more-btn:hover {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(204, 255, 0, 0.3);
+}
         /* 数据源隐藏容器 */
         .data-source { display: none; }
         #news { padding: 0 5vw 150px; }
