@@ -140,23 +140,39 @@
             <div class="works-grid">
                 
                 <!-- 案例 1 (视频) -->
-                <!-- 在 data-desc 中修改详情文案 -->
+                <!-- 案例 1 -->
                 <div class="case-card hover-target" onclick="openWork(this)">
-                    <!-- 隐藏的数据源：用于弹窗读取 -->
+                    <!-- 数据源区域 (Hidden) -->
                     <div class="data-source">
                         <div class="d-title">Fintech Pro</div>
-                        <div class="d-cat">App Design / Motion</div>
-                        <!-- 这里修改详情页描述 -->
-                        <div class="d-desc">专为新一代投资者设计的交易终端。重点在于将复杂的数据流通过动态图表实时展示。视频展示了核心的交易流程动效。</div>
-                        <div class="d-type">video</div>
-                        <!-- 这里修改视频链接 -->
-                        <div class="d-src">https://joy1.videvo.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4</div>
+                        <div class="d-cat">App Design</div>
+                        <div class="d-desc">
+                            这里是项目描述。<br>
+                            你可以在这里写很多字，介绍你的设计思路...
+                        </div>
+                        
+                        <!-- 修改 A：这里决定详情页顶部的“大图/视频” -->
+                        <!-- 如果你想放图片，把 video 改成 image -->
+                        <div class="d-type">image</div> 
+                        <!-- 这里填封面大图的链接 -->
+                        <div class="d-src">https://你的图片链接_封面.jpg</div>
+
+                        <!-- 修改 B：新增！详情页的长图/配图 -->
+                        <!-- 多个图片链接用英文逗号 (,) 隔开 -->
+                        <div class="d-gallery">
+                            https://你的详情图_1.jpg,
+                            https://你的详情图_2.jpg,
+                            https://你的详情图_3.jpg
+                        </div>
                     </div>
 
-                    <!-- 卡片显示的内容 -->
+                    <!-- 视觉展示区域 (Visible) -->
                     <div class="media-container">
-                        <video class="media-content" src="https://joy1.videvo.net/videvo_files/video/free/2019-11/large_watermarked/190301_1_25_11_preview.mp4" autoplay muted loop playsinline></video>
+                        <!-- 修改 C：这里是首页看到的卡片图 -->
+                        <!-- 记得把 src 换成你的图片链接 -->
+                        <img class="media-content" src="https://你的图片链接_封面.jpg">
                     </div>
+
                     <div class="case-info">
                         <div><h3 class="case-title">Fintech Pro</h3><span class="case-cat">App Design</span></div>
                         <div style="font-size:2rem; color:var(--border)">01</div>
@@ -274,19 +290,29 @@
         const mGallery = document.getElementById('modal-gallery');
 
         function openWork(element) {
-            // 从点击的元素中读取数据
             const data = element.querySelector('.data-source');
+            // 1. 读取基础信息
             const title = data.querySelector('.d-title').innerText;
-            const desc = data.querySelector('.d-desc').innerHTML; // 支持HTML标签
+            const desc = data.querySelector('.d-desc').innerHTML;
             const type = data.querySelector('.d-type').innerText;
             const src = data.querySelector('.d-src').innerText;
+            
+            // 2. 读取多张详情图 (关键修改：如果有 d-gallery 就读取，没有就是空的)
+            const galleryDiv = data.querySelector('.d-gallery');
+            const galleryRaw = galleryDiv ? galleryDiv.innerText : '';
+
+            // 3. 填充标题和描述
+            const mTitle = document.getElementById('modal-title');
+            const mDesc = document.getElementById('modal-desc');
+            const mMediaWrapper = document.getElementById('modal-media-wrapper');
+            const mGallery = document.getElementById('modal-gallery');
 
             mTitle.innerText = title;
             mDesc.innerHTML = desc;
             mMediaWrapper.innerHTML = '';
             mGallery.innerHTML = '';
 
-            // 生成头部媒体
+            // 4. 生成顶部大图/视频
             if (type === 'video') {
                 const vid = document.createElement('video');
                 vid.src = src; vid.className = 'modal-hero-media';
@@ -298,25 +324,26 @@
                 mMediaWrapper.appendChild(img);
             }
 
-            // 生成模拟长图 (你可以在 data-source 里扩展长图链接)
-            for(let i=1; i<=2; i++) {
-                const img = document.createElement('img');
-                img.src = `https://placehold.co/1200x${800+i*100}/111/444?text=${title}+Detail+${i}`;
-                img.className = 'detail-img'; img.style.marginBottom = '10px';
-                mGallery.appendChild(img);
+            // 5. 生成多张详情图 (用逗号分隔)
+            if(galleryRaw.trim() !== "") {
+                // 把长字符串按逗号切开
+                const urls = galleryRaw.split(','); 
+                urls.forEach(url => {
+                    url = url.trim(); // 去掉前后空格
+                    if(url) {
+                        const img = document.createElement('img');
+                        img.src = url;
+                        img.className = 'detail-img'; 
+                        img.style.marginBottom = '20px';
+                        mGallery.appendChild(img);
+                    }
+                });
             }
 
+            const modal = document.getElementById('detailModal');
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
-
-        function openNews(element) {
-            const data = element.querySelector('.data-source');
-            mTitle.innerText = data.querySelector('.d-title').innerText;
-            mDesc.innerHTML = data.querySelector('.d-desc').innerHTML;
-            mMediaWrapper.innerHTML = ''; mGallery.innerHTML = '';
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
